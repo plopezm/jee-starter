@@ -40,25 +40,22 @@ public class LoginResource {
             @PathParam("passwd") String passwd){
         HttpSession session = request.getSession(true);
         User userFound = loginService.getUser(user, passwd);
-        
         if(userFound == null)
             return Response.status(Response.Status.NOT_FOUND).entity(new ErrorMessage(404, "User does not exist")).build();
-        
-        session.setAttribute("userId", userFound.getId());
-        return Response.status(Response.Status.CREATED).entity(userFound).build();
+        session.setAttribute("user", userFound);
+        return Response.status(Response.Status.OK).build();
     }
     
     @POST
-    @Consumes(value = MediaType.APPLICATION_JSON)
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response login(@Context HttpServletRequest request,
             User user){
         HttpSession session = request.getSession(true);
         User userFound = loginService.getUser(user.getUsername(), user.getPassword());
         if(userFound == null)
             return Response.status(Response.Status.NOT_FOUND).entity(new ErrorMessage(404, "User does not exist")).build();
-        session.setAttribute("userId", userFound.getId());
-        return Response.status(Response.Status.CREATED).entity(userFound).build();
+        session.setAttribute("user", userFound);
+        return Response.status(Response.Status.OK).build();
     }
     
     
