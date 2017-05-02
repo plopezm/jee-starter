@@ -59,7 +59,7 @@ public class UserProvider implements ContainerRequestFilter {
     
     @Override
     public void filter(ContainerRequestContext containerRequestContext) throws IOException {
-        final Response errResponse = Response.status(Response.Status.UNAUTHORIZED).entity(new ErrorMessage(401, "You must to log in first")).build();  
+        final Response errResponse = Response.status(Response.Status.UNAUTHORIZED).entity(new ErrorMessage(401, "Unauthorized")).build();  
         HttpSession session = servletRequest.getSession();
         
         if(session != null && session.getAttribute("user") != null)
