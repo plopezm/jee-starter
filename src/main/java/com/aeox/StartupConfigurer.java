@@ -34,13 +34,20 @@ public class StartupConfigurer {
         roleUser.setName("user");
         loginService.createRole(roleUser);
         
-        User user = new User();
-        user.setUsername("test");
-        user.setPassword("test");
-        user.setRole(roleAdmin);
+        User userAdmin = new User();
+        userAdmin.setUsername("admin");
+        userAdmin.setPassword("admin");
+        userAdmin.setRole(roleAdmin);
         
-        loginService.createUser(roleAdmin, user);
+        loginService.createUser(roleAdmin, userAdmin);
         
+        User commonUser = new User();
+        commonUser.setUsername("test");
+        commonUser.setPassword("test");
+        commonUser.setRole(roleAdmin);
+        
+        loginService.createUser(roleUser, commonUser);
+
     }
     
 }

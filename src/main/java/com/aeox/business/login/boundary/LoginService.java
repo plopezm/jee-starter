@@ -7,6 +7,7 @@ package com.aeox.business.login.boundary;
 
 import com.aeox.business.login.entity.Role;
 import com.aeox.business.login.entity.User;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -64,6 +65,10 @@ public class LoginService {
 
     public void setEm(EntityManager em) {
         this.em = em;
+    }
+
+    public List getUsers() {
+        return this.em.createNamedQuery("login.entity.User.all").getResultList();
     }
     
 }

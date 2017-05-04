@@ -85,7 +85,8 @@ public class LoginResource {
     @Produces(value = MediaType.APPLICATION_JSON)
     @SessionSecured(role = "admin")
     public Response getUsers(){
-        return Response.status(Response.Status.OK).entity("").build();
+        
+        return Response.status(Response.Status.OK).entity(loginService.getUsers()).build();
     }
     
     @GET
