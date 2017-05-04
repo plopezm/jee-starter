@@ -7,6 +7,8 @@ package com.aeox.business.login.entity;
 
 import com.aeox.business.common.entity.AbstractEntity;
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 /**
@@ -15,6 +17,9 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "auth_role")
+@NamedQueries({
+    @NamedQuery(name = "login.entity.Role.findByUser", query = "SELECT r FROM Role r, User u WHERE u.username = :username AND u.role.id = r.id")
+})
 public class Role extends AbstractEntity{
     
     private String name;

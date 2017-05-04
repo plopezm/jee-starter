@@ -7,8 +7,10 @@ package com.aeox.business.login.control;
 
 import com.aeox.business.common.boundary.ErrorMessage;
 import com.aeox.business.login.boundary.LoginService;
+import com.aeox.business.login.entity.Role;
 import com.aeox.business.login.entity.User;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.StringTokenizer;
 import javax.inject.Inject;
@@ -16,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
@@ -39,6 +42,9 @@ public class UserProvider implements ContainerRequestFilter {
     @Context 
     private HttpHeaders headers;
     
+    @Context
+    private ResourceInfo resourceInfo;
+    
     private User getAuthorization(HttpHeaders headers) {
         List<String> header = headers.getRequestHeader(HttpHeaders.AUTHORIZATION);
         
@@ -57,12 +63,39 @@ public class UserProvider implements ContainerRequestFilter {
         return user;
     }
     
+    private boolean isSessionAuthorized(HttpSession session, SessionSecured sessionSecured){
+        User user;
+        
+        if(session == null)
+            return false;
+        
+        if((user = (User) session.getAttribute("user")) == null)
+            return false;
+        
+        if(sessionSecured.role().isEmpty())
+            return true;
+        
+        Role userRole = loginService.getRoleByUser(user);
+        
+        if(userRole == null)
+            return false;
+        
+        if(userRole.getName().compareTo(sessionSecured.role()) == 0)
+            return true;
+                
+        return false;
+    }
+    
     @Override
     public void filter(ContainerRequestContext containerRequestContext) throws IOException {
         final Response errResponse = Response.status(Response.Status.UNAUTHORIZED).entity(new ErrorMessage(401, "Unauthorized")).build();  
         HttpSession session = servletRequest.getSession();
         
-        if(session != null && session.getAttribute("user") != null)
+        Class<?> resourceClass = resourceInfo.getResourceClass();
+        Method resourceMethod = resourceInfo.getResourceMethod();
+        SessionSecured ss = resourceMethod.getDeclaredAnnotation(SessionSecured.class);
+        
+        if(isSessionAuthorized(session, ss))
             return;
         
         User user = getAuthorization(headers);
@@ -76,6 +109,5 @@ public class UserProvider implements ContainerRequestFilter {
             return;
         
         containerRequestContext.abortWith(errResponse);
-        
     }
 }

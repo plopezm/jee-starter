@@ -63,7 +63,7 @@ public class LoginResource {
     @Path("roles")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
-    @SessionSecured
+    @SessionSecured(role = "admin")
     public Response createRole(Role role){
         Role roleCreated = loginService.createRole(role);
         return Response.status(Response.Status.CREATED).entity(roleCreated).build();
@@ -73,7 +73,7 @@ public class LoginResource {
     @Path("roles/{role_id}/users")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
-    @SessionSecured
+    @SessionSecured(role = "admin")
     public Response createAccount(@PathParam("role_id") Long roleId, User user){
         Role role = loginService.getRole(roleId);
         User userCreated = loginService.createUser(role, user);
@@ -83,7 +83,7 @@ public class LoginResource {
     @GET
     @Path("users")
     @Produces(value = MediaType.APPLICATION_JSON)
-    @SessionSecured
+    @SessionSecured(role = "admin")
     public Response getUsers(){
         return Response.status(Response.Status.OK).entity("").build();
     }
@@ -91,7 +91,7 @@ public class LoginResource {
     @GET
     @Path("users/{user_id}")
     @Produces(value = MediaType.APPLICATION_JSON)
-    @SessionSecured
+    @SessionSecured(role = "admin")
     public Response getUser(@PathParam("user_id") Long userId){
         User userFound = loginService.getUser(userId);
         return Response.status(Response.Status.OK).entity(userFound).build();

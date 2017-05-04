@@ -33,6 +33,12 @@ public class LoginService {
         return this.em.find(Role.class, id);
     }
     
+    public Role getRoleByUser(User user){
+        Query query = this.em.createNamedQuery("login.entity.Role.findByUser");
+        query.setParameter("username", user.getUsername());
+        return (Role) query.getSingleResult();
+    }
+    
     public User createUser(Role role, User user){
         user.setRole(role);
         this.em.persist(user);
