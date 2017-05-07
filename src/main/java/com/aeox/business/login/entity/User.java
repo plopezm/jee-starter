@@ -8,6 +8,7 @@ package com.aeox.business.login.entity;
 import com.aeox.business.common.entity.AbstractEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -25,11 +26,13 @@ import javax.persistence.Table;
 })
 public class User extends AbstractEntity{
     
-    @Column(unique=true)
+    @Column(unique=true, nullable = false)
     private String username;
+    @Column(nullable = false)
     private String password;
     
     @ManyToOne
+    @JoinColumn(nullable = false)
     private Role role;
 
     public String getUsername() {

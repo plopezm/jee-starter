@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -32,20 +33,6 @@ public class LoginResource {
     @Inject
     private LoginService loginService;
     
-    @GET
-    @Path("/users/{usr}/passwd/{passwd}")
-    @Produces(value = MediaType.APPLICATION_JSON)
-    public Response login(@Context HttpServletRequest request,
-            @PathParam("usr") String user,
-            @PathParam("passwd") String passwd){
-        HttpSession session = request.getSession(true);
-        User userFound = loginService.getUser(user, passwd);
-        if(userFound == null)
-            return Response.status(Response.Status.NOT_FOUND).entity(new ErrorMessage(404, "User does not exist")).build();
-        session.setAttribute("user", userFound);
-        return Response.status(Response.Status.OK).build();
-    }
-    
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response login(@Context HttpServletRequest request,
@@ -58,6 +45,14 @@ public class LoginResource {
         return Response.status(Response.Status.OK).build();
     }
     
+    @DELETE
+    public Response logout(@Context HttpServletRequest request,
+            User user){
+        HttpSession session = request.getSession(true);
+        session.removeAttribute("user");
+        session.invalidate();
+        return Response.status(Response.Status.OK).build();
+    }
     
     @POST
     @Path("roles")

@@ -6,6 +6,7 @@
 package com.aeox.business.login.entity;
 
 import com.aeox.business.common.entity.AbstractEntity;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -22,6 +23,7 @@ import javax.persistence.Table;
 })
 public class Role extends AbstractEntity{
     
+    @Column(nullable = false)
     private String name;
 
     public String getName() {

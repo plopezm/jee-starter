@@ -2,6 +2,7 @@ package com.aeox;
 
 import com.aeox.business.common.exception.OptimisticLockExceptionMapper;
 import com.aeox.business.login.boundary.LoginResource;
+import com.aeox.business.login.control.CORSProvider;
 import com.aeox.business.login.control.UserProvider;
 import com.aeox.business.login.exception.NoResultExceptionMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
@@ -31,6 +32,7 @@ public class JAXRSConfiguration extends Application {
         
         //PROVIDERS
         classes.add(UserProvider.class);
+        classes.add(CORSProvider.class);
         return classes;
     }
 
