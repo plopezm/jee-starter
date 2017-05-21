@@ -6,6 +6,7 @@
 package com.aeox.business.login.boundary;
 
 import com.aeox.business.common.boundary.ErrorMessage;
+import com.aeox.business.login.control.CORSEnabled;
 import com.aeox.business.login.control.SessionSecured;
 import com.aeox.business.login.entity.Role;
 import com.aeox.business.login.entity.User;
@@ -28,17 +29,18 @@ import javax.ws.rs.core.Response;
  * @author XLOPP2
  */
 @Path("login")
+@CORSEnabled(domain = "http://localhost:4200", allowCredentials = true)
 public class LoginResource {
     
     @Inject
-    private LoginService loginService;
+    private LoginServiceDB loginService;
     
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response login(@Context HttpServletRequest request,
             User user){
         HttpSession session = request.getSession(true);
-        User userFound = loginService.getUser(user.getUsername(), user.getPassword());
+        User userFound = loginService.validateUser(user.getUsername(), user.getPassword());
         if(userFound == null)
             return Response.status(Response.Status.NOT_FOUND).entity(new ErrorMessage(404, "User does not exist")).build();
         session.setAttribute("user", userFound);
@@ -70,7 +72,7 @@ public class LoginResource {
     @Produces(value = MediaType.APPLICATION_JSON)
     @SessionSecured(role = "admin")
     public Response createAccount(@PathParam("role_id") Long roleId, User user){
-        Role role = loginService.getRole(roleId);
+        Role role = loginService.getRoleById(roleId);
         User userCreated = loginService.createUser(role, user);
         return Response.status(Response.Status.CREATED).entity(userCreated).build();
     }
@@ -89,7 +91,7 @@ public class LoginResource {
     @Produces(value = MediaType.APPLICATION_JSON)
     @SessionSecured(role = "admin")
     public Response getUser(@PathParam("user_id") Long userId){
-        User userFound = loginService.getUser(userId);
+        User userFound = loginService.getUserById(userId);
         return Response.status(Response.Status.OK).entity(userFound).build();
     }
     

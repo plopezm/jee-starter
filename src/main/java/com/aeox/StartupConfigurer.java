@@ -5,7 +5,7 @@
  */
 package com.aeox;
 
-import com.aeox.business.login.boundary.LoginService;
+import com.aeox.business.login.boundary.LoginServiceDB;
 import com.aeox.business.login.entity.Role;
 import com.aeox.business.login.entity.User;
 import javax.annotation.PostConstruct;
@@ -22,7 +22,7 @@ import javax.inject.Inject;
 public class StartupConfigurer {
     
     @Inject
-    private LoginService loginService;
+    private LoginServiceDB loginService;
     
     @PostConstruct
     public void setFirstAccount(){
@@ -40,14 +40,6 @@ public class StartupConfigurer {
         userAdmin.setRole(roleAdmin);
         
         loginService.createUser(roleAdmin, userAdmin);
-        
-        User commonUser = new User();
-        commonUser.setUsername("test");
-        commonUser.setPassword("test");
-        commonUser.setRole(roleAdmin);
-        
-        loginService.createUser(roleUser, commonUser);
-
     }
     
 }

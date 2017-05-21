@@ -5,7 +5,6 @@
  */
 package com.aeox.business.login.boundary;
 
-import com.aeox.business.login.boundary.LoginService;
 import com.aeox.business.login.entity.Role;
 import javax.persistence.EntityManager;
 import static org.junit.Assert.*;
@@ -22,12 +21,12 @@ public class LoginServiceTest {
     public LoginServiceTest() {
     }
     
-    private LoginService toTest;
+    private LoginServiceDB toTest;
     private EntityManager em;
     
     @Before
     public void setUp(){
-        toTest = new LoginService();
+        toTest = new LoginServiceDB();
         em = mock(EntityManager.class);
     }
 
@@ -47,7 +46,7 @@ public class LoginServiceTest {
         when(em.find(any(), anyLong())).thenReturn(mockedRole);
         toTest.setEm(em);
         
-        assertEquals(1, toTest.getRole(1).getId());
+        assertEquals(1, toTest.getRoleById(1L).getId());
     }
     
 }

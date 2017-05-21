@@ -3,13 +3,13 @@ package com.aeox;
 import com.aeox.business.common.exception.OptimisticLockExceptionMapper;
 import com.aeox.business.login.boundary.LoginResource;
 import com.aeox.business.login.control.CORSProvider;
-import com.aeox.business.login.control.UserProvider;
-import com.aeox.business.login.exception.NoResultExceptionMapper;
+import com.aeox.business.login.control.SessionProvider;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import java.util.HashSet;
 import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
+import org.eclipse.persistence.jpa.rs.exceptions.NoResultExceptionMapper;
 
 /**
  * Configures a JAX-RS endpoint. Delete this class, if you are not exposing
@@ -31,7 +31,7 @@ public class JAXRSConfiguration extends Application {
         classes.add(NoResultExceptionMapper.class);
         
         //PROVIDERS
-        classes.add(UserProvider.class);
+        classes.add(SessionProvider.class);
         classes.add(CORSProvider.class);
         return classes;
     }

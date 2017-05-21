@@ -31,7 +31,7 @@ import org.eclipse.persistence.internal.oxm.conversion.Base64;
  */
 @Provider
 @SessionSecured
-public class UserProvider implements ContainerRequestFilter {
+public class SessionProvider implements ContainerRequestFilter {
     
     @Inject
     private LoginService loginService;
@@ -80,10 +80,7 @@ public class UserProvider implements ContainerRequestFilter {
         if(userRole == null)
             return false;
         
-        if(userRole.getName().compareTo(sessionSecured.role()) == 0)
-            return true;
-                
-        return false;
+        return userRole.getName().compareTo(sessionSecured.role()) == 0;
     }
     
     @Override
@@ -91,9 +88,13 @@ public class UserProvider implements ContainerRequestFilter {
         final Response errResponse = Response.status(Response.Status.UNAUTHORIZED).entity(new ErrorMessage(401, "Unauthorized")).build();  
         HttpSession session = servletRequest.getSession();
         
-        Class<?> resourceClass = resourceInfo.getResourceClass();
         Method resourceMethod = resourceInfo.getResourceMethod();
         SessionSecured ss = resourceMethod.getDeclaredAnnotation(SessionSecured.class);
+        
+        if(ss == null){
+            Class<?> resourceClass = resourceInfo.getResourceClass();
+            ss = resourceClass.getDeclaredAnnotation(SessionSecured.class);
+        }
         
         if(isSessionAuthorized(session, ss))
             return;
@@ -104,7 +105,7 @@ public class UserProvider implements ContainerRequestFilter {
             return;
         }
         
-        user = loginService.getUser(user.getUsername(), user.getPassword());
+        user = loginService.validateUser(user.getUsername(), user.getPassword());
         if(user != null)
             return;
         
