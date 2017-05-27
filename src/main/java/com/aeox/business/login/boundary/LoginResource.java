@@ -6,12 +6,14 @@
 package com.aeox.business.login.boundary;
 
 import com.aeox.business.common.boundary.ErrorMessage;
+import com.aeox.business.logger.control.LogInterceptor;
 import com.aeox.business.login.control.CORSEnabled;
 import com.aeox.business.login.control.SessionProvider;
 import com.aeox.business.login.control.SessionSecured;
 import com.aeox.business.login.entity.Role;
 import com.aeox.business.login.entity.User;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
@@ -32,6 +34,7 @@ import javax.ws.rs.core.Response;
  */
 @Path("login")
 @CORSEnabled(domain = "http://localhost:4200", allowCredentials = true)
+@Interceptors(LogInterceptor.class)
 public class LoginResource {
     
     @Inject

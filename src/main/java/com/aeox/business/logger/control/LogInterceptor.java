@@ -16,9 +16,9 @@ import javax.interceptor.InvocationContext;
  *
  * @author XLOPP2
  */
-public class LoggingInterceptor {
+public class LogInterceptor {
 
-    private static final Logger LOG = Logger.getLogger(LoggingInterceptor.class.getName());
+    private static final Logger LOG = Logger.getLogger(LogInterceptor.class.getName());
     
     @AroundInvoke
     public Object intercept(InvocationContext ctx) throws Exception{
