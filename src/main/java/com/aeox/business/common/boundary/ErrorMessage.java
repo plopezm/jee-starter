@@ -14,9 +14,9 @@ public class ErrorMessage {
     private int code;
     private String error;
 
-    public ErrorMessage(int code, String errorMsg) {
+    public ErrorMessage(int code, String error) {
         this.code = code;
-        this.error = errorMsg;
+        this.error = error;
     }
 
     public int getCode() {
@@ -27,11 +27,11 @@ public class ErrorMessage {
         this.code = code;
     }
 
-    public String getErrorMsg() {
+    public String getError() {
         return error;
     }
 
-    public void setErrorMsg(String errorMsg) {
+    public void setError(String errorMsg) {
         this.error = errorMsg;
     }
     

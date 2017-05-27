@@ -7,6 +7,7 @@ package com.aeox.business.login.boundary;
 
 import com.aeox.business.common.boundary.ErrorMessage;
 import com.aeox.business.login.control.CORSEnabled;
+import com.aeox.business.login.control.SessionProvider;
 import com.aeox.business.login.control.SessionSecured;
 import com.aeox.business.login.entity.Role;
 import com.aeox.business.login.entity.User;
@@ -21,6 +22,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -33,14 +35,18 @@ import javax.ws.rs.core.Response;
 public class LoginResource {
     
     @Inject
-    private LoginServiceDB loginService;
+    private LoginService loginService;
     
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response login(@Context HttpServletRequest request,
-            User user){
+            @Context HttpHeaders headers){
         HttpSession session = request.getSession(true);
-        User userFound = loginService.validateUser(user.getUsername(), user.getPassword());
+        User userReceived = SessionProvider.getBasicAuthorization(headers);
+        if (userReceived == null)
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorMessage(400, "Authorization header is not attached")).build();
+        User userFound = loginService.validateUser(userReceived.getUsername(), userReceived.getPassword());
         if(userFound == null)
             return Response.status(Response.Status.NOT_FOUND).entity(new ErrorMessage(404, "User does not exist")).build();
         session.setAttribute("user", userFound);

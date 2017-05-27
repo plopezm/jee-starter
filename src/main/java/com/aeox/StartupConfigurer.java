@@ -5,7 +5,7 @@
  */
 package com.aeox;
 
-import com.aeox.business.login.boundary.LoginServiceDB;
+import com.aeox.business.login.boundary.LoginService;
 import com.aeox.business.login.entity.Role;
 import com.aeox.business.login.entity.User;
 import javax.annotation.PostConstruct;
@@ -22,7 +22,7 @@ import javax.inject.Inject;
 public class StartupConfigurer {
     
     @Inject
-    private LoginServiceDB loginService;
+    private LoginService loginService;
     
     @PostConstruct
     public void setFirstAccount(){

@@ -45,7 +45,7 @@ public class SessionProvider implements ContainerRequestFilter {
     @Context
     private ResourceInfo resourceInfo;
     
-    private User getAuthorization(HttpHeaders headers) {
+    public static User getBasicAuthorization(HttpHeaders headers) {
         List<String> header = headers.getRequestHeader(HttpHeaders.AUTHORIZATION);
         
         if(header == null || header.isEmpty())
@@ -99,7 +99,7 @@ public class SessionProvider implements ContainerRequestFilter {
         if(isSessionAuthorized(session, ss))
             return;
         
-        User user = getAuthorization(headers);
+        User user = getBasicAuthorization(headers);
         if(user == null){
             containerRequestContext.abortWith(errResponse);
             return;

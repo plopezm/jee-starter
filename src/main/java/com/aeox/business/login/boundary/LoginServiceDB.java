@@ -9,22 +9,23 @@ import com.aeox.business.login.entity.Role;
 import com.aeox.business.login.entity.User;
 import java.util.List;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.transaction.Transactional;
 
 /**
  *
  * @author XLOPP2
  */
 @Stateless
-@Transactional
 public class LoginServiceDB implements LoginService{
     
     @PersistenceContext
     private EntityManager em;
     
+    @Override
     public Role createRole(Role role){
         this.em.persist(role);
         this.em.flush();
@@ -33,13 +34,13 @@ public class LoginServiceDB implements LoginService{
     }
     
     @Override
-    @Transactional(Transactional.TxType.SUPPORTS)
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public Role getRoleById(Long id){
         return this.em.find(Role.class, id);
     }
     
     @Override
-    @Transactional(Transactional.TxType.SUPPORTS)
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public Role getRoleByUser(User user){
         Query query = this.em.createNamedQuery("login.entity.Role.findByUser");
         query.setParameter("username", user.getUsername());
@@ -56,13 +57,13 @@ public class LoginServiceDB implements LoginService{
     }    
 
     @Override
-    @Transactional(Transactional.TxType.SUPPORTS)
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public User getUserById(Long userId) {
         return this.em.find(User.class, userId);
     }
     
     @Override
-    @Transactional(Transactional.TxType.SUPPORTS)
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public User validateUser(String username, String password){
         Query query = this.em.createNamedQuery("login.entity.User.checkUser");
         query.setParameter("username", username);
@@ -71,7 +72,7 @@ public class LoginServiceDB implements LoginService{
     }
 
     @Override
-    @Transactional(Transactional.TxType.SUPPORTS)
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List getUsers() {
         return this.em.createNamedQuery("login.entity.User.all").getResultList();
     }
