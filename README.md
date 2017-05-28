@@ -14,7 +14,7 @@ This project is composed of the following components:
 
 Tests are being currently developed using mockito.
 
-# License
+# MIT License
 
 Copyright 2017 Pablo López Martínez
 
