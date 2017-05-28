@@ -13,7 +13,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.HttpHeaders;
 import org.eclipse.persistence.internal.oxm.conversion.Base64;
 import org.junit.After;
@@ -24,6 +27,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.*;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 
 /**
  *
@@ -42,7 +46,12 @@ public class SessionProviderTest {
     private SessionSecured sessionSecured;
     @Mock
     private LoginService loginService;
+    @Mock
+    private HttpServletRequest servletRequest;
+    @Mock
+    private ResourceInfo resourceInfo;
     
+    @Spy
     @InjectMocks
     private SessionProvider underTest;
     
@@ -61,7 +70,7 @@ public class SessionProviderTest {
         //Given
         when(httpSession.getAttribute(anyString())).thenReturn(null);
         //When
-        Method methodUnderTest = underTest.getClass().getDeclaredMethod("isSessionAuthorized", HttpSession.class, SessionSecured.class);
+        Method methodUnderTest = SessionProvider.class.getDeclaredMethod("isSessionAuthorized", HttpSession.class, SessionSecured.class);
         methodUnderTest.setAccessible(true);
         boolean resFalse = (boolean) methodUnderTest.invoke(underTest, httpSession, sessionSecured);
         //Then
@@ -79,7 +88,7 @@ public class SessionProviderTest {
         when(httpSession.getAttribute(anyString())).thenReturn(user);
         when(sessionSecured.role()).thenReturn("");
         //When
-        Method methodUnderTest = underTest.getClass().getDeclaredMethod("isSessionAuthorized", HttpSession.class, SessionSecured.class);
+        Method methodUnderTest = SessionProvider.class.getDeclaredMethod("isSessionAuthorized", HttpSession.class, SessionSecured.class);
         methodUnderTest.setAccessible(true);
         boolean resOk = (boolean) methodUnderTest.invoke(underTest, httpSession, sessionSecured);
         //Then
@@ -98,7 +107,7 @@ public class SessionProviderTest {
         when(sessionSecured.role()).thenReturn("testRole");
         when(loginService.getRoleByUser(user)).thenReturn(role);
         //When
-        Method methodUnderTest = underTest.getClass().getDeclaredMethod("isSessionAuthorized", HttpSession.class, SessionSecured.class);
+        Method methodUnderTest = SessionProvider.class.getDeclaredMethod("isSessionAuthorized", HttpSession.class, SessionSecured.class);
         methodUnderTest.setAccessible(true);
         boolean resOk = (boolean) methodUnderTest.invoke(underTest, httpSession, sessionSecured);
         //Then
@@ -117,7 +126,7 @@ public class SessionProviderTest {
         when(sessionSecured.role()).thenReturn("otherRole");
         when(loginService.getRoleByUser(user)).thenReturn(role);
         //When
-        Method methodUnderTest = underTest.getClass().getDeclaredMethod("isSessionAuthorized", HttpSession.class, SessionSecured.class);
+        Method methodUnderTest = SessionProvider.class.getDeclaredMethod("isSessionAuthorized", HttpSession.class, SessionSecured.class);
         methodUnderTest.setAccessible(true);
         boolean resFalse = (boolean) methodUnderTest.invoke(underTest, httpSession, sessionSecured);
         //Then
@@ -155,7 +164,32 @@ public class SessionProviderTest {
      * Test of filter method, of class SessionProvider.
      */
     @Test
-    public void testFilter(){
+    public void testFilterSessionSecurizedOk() throws Exception{
+        //Given
+//        ContainerRequestContext containerRequestContext = mock(ContainerRequestContext.class);
+//        when(servletRequest.getSession()).thenReturn(httpSession);
+//        when(resourceInfo.getResourceMethod()).thenReturn(resourceMethod);
+//        when(resourceInfo.getResourceClass()).thenReturn(resourceClass);
+//        when(resourceMethod.getDeclaredAnnotation(any())).thenReturn(sessionSecured);
+//        when(resourceClass.getDeclaredAnnotation(any())).thenReturn(sessionSecured);
+//        when(resourceInfo.getResourceClass());
+//        
+//        User user = new User();
+//        Role role = new Role();
+//        role.setName("testRole");
+//        user.setRole(role);
+//        when(httpSession.getAttribute(anyString())).thenReturn(user);
+//        when(sessionSecured.role()).thenReturn("testRole");
+//        when(loginService.getRoleByUser(user)).thenReturn(role);
+//        
+//        doNothing().when(containerRequestContext).abortWith(any());
+        
+        //When
+//        underTest.filter(containerRequestContext);
+        
+        
+        //Then
+        
     }
     
 }

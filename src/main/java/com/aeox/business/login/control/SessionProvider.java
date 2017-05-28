@@ -89,14 +89,14 @@ public class SessionProvider implements ContainerRequestFilter {
         HttpSession session = servletRequest.getSession();
         
         Method resourceMethod = resourceInfo.getResourceMethod();
-        SessionSecured ss = resourceMethod.getDeclaredAnnotation(SessionSecured.class);
+        SessionSecured sessionSecured = resourceMethod.getDeclaredAnnotation(SessionSecured.class);
         
-        if(ss == null){
+        if(sessionSecured == null){
             Class<?> resourceClass = resourceInfo.getResourceClass();
-            ss = resourceClass.getDeclaredAnnotation(SessionSecured.class);
+            sessionSecured = resourceClass.getDeclaredAnnotation(SessionSecured.class);
         }
         
-        if(isSessionAuthorized(session, ss))
+        if(isSessionAuthorized(session, sessionSecured))
             return;
         
         User user = getBasicAuthorization(headers);
