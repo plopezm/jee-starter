@@ -12,7 +12,14 @@ This project is composed of the following components:
 
 # Tests
 
-Tests are being currently developed using mockito.
+Tests are being currently developed using mockito. Executing the tests is as follows:
+
+```
+mvn test
+```
+
+The output shows the test results. The tests implemented are Unit tests with mockito and Integration tests with embedded database.
+
 
 # Creating artifact
 Creating an artifact is the best way to reuse this starter from multiple projects. Below it is explained how to create it en local maven repository.
