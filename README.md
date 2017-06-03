@@ -14,6 +14,16 @@ This project is composed of the following components:
 
 Tests are being currently developed using mockito.
 
+# Creating artifact
+Creating an artifact is the best way to reuse this starter from multiple projects. Below it is explained how to create it en local maven repository.
+
+1. mvn archetype:create-from-project
+2. cd target/generated-sources/archetype/
+2. mvn install
+
+Now it is possible to create a new project from this archetype:
+1. mvn archetype:generate -Dfilter=com.aeox:jee-starter
+
 # MIT License
 
 Copyright 2017 Pablo López Martínez
