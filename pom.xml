@@ -103,6 +103,15 @@
                 <groupId>org.pitest</groupId>
                 <artifactId>pitest-maven</artifactId>
                 <version>1.2.0</version>
+                <configuration>
+                    <targetClasses>
+                        <param>com.aeox.business.common.boundary.*</param>
+                        <param>com.aeox.business.common.control.*</param>
+                        <param>com.aeox.business.login.boundary.*</param>
+                        <param>com.aeox.business.login.control.*</param>
+                        <param>com.aeox.business.login.entity.*</param>
+                    </targetClasses>
+                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
