@@ -37,7 +37,7 @@ Now it is possible to create a new project from this archetype:
 
 This project contains a plugin called pitest to create test coverage reports with maven. To do it just type the following command.
 ```
-mvn org.pitest:pitest-maven:mutationCoverage
+mvn package org.pitest:pitest-maven:mutationCoverage
 ```
 Test coverage report will be created here: target/pit-reports/YYYYMMDDHHMI.
 
