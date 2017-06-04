@@ -31,6 +31,35 @@ Creating an artifact is the best way to reuse this starter from multiple project
 Now it is possible to create a new project from this archetype:
 1. mvn archetype:generate -Dfilter=com.aeox:jee-starter
 
+# Plugins
+
+### Test coverage
+
+This project contains a plugin called pitest to create test coverage reports with maven. To do it just type the following command.
+```
+mvn org.pitest:pitest-maven:mutationCoverage
+```
+Test coverage report will be created here: target/pit-reports/YYYYMMDDHHMI.
+
+### Remote deployment
+
+This project has defined a profile to deploy de application on desired application server. To do it just type the following.
+```
+mvn package -P deploy
+```
+The application will be deployed on the server configured according with the pom file configuration. The following code shows how to change server address, port and admin account.
+
+```
+<properties>
+        <payara.username></payara.username>
+        <payara.password></payara.password>
+        <payara.hostname>localhost</payara.hostname>
+        <payara.adminPort>4848</payara.adminPort>
+</properties>
+```
+These variables will be used by cargo plugin to load the application propertly.
+
+
 # MIT License
 
 Copyright 2017 Pablo López Martínez
