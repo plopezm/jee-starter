@@ -22,17 +22,17 @@ import org.junit.Test;
  *
  * @author XLOPP2
  */
-public class CrudServiceImplTest {
+public class CrudServiceEntityManagerTest {
     
-    private CrudServiceImpl<TestEntity> toTest;
+    private CrudServiceEntityManager<TestEntity> toTest;
     private EntityTransaction tx;
     
-    public CrudServiceImplTest() {
+    public CrudServiceEntityManagerTest() {
     }
     
     @Before
     public void setUp() {
-       toTest = new CrudServiceImpl();
+       toTest = new CrudServiceEntityManager();
        EntityManagerFactory emf = Persistence.createEntityManagerFactory("tests");
        toTest.setEm(emf.createEntityManager());
        this.tx = this.toTest.getEm().getTransaction();

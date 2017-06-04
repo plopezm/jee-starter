@@ -22,7 +22,7 @@ import javax.persistence.Query;
 @Stateless
 @Local(CrudService.class)
 @TransactionAttribute(TransactionAttributeType.MANDATORY)
-public class CrudServiceImpl<T> implements CrudService<T>{
+public class CrudServiceEntityManager<T> implements CrudService<T>{
 
     @PersistenceContext
     private EntityManager em;
