@@ -267,4 +267,33 @@ public class SessionProviderTest {
         verify(loginService, times(1)).validateUser(any(), any());
         assertTrue(resTrue);
     }
+    
+    @Test
+    public void shouldIsAuthorizedDeniedWithHTTPBasicBecauseRoleDoesntMatch() throws Exception{
+        //Given 
+        when(servletRequest.getSession()).thenReturn(httpSession);
+        Method resourceMethod = SessionProviderTest.class.getDeclaredMethod("supportSessionSecuredMethod");
+        when(resourceInfo.getResourceMethod()).thenReturn(resourceMethod);
+        
+        User user = new User();
+        Role role = new Role();
+        role.setName("otherRole");
+        user.setRole(role);
+        when(httpSession.getAttribute(anyString())).thenReturn(null);
+        when(loginService.getRoleByUser(any())).thenReturn(role);
+        when(loginService.validateUser(any(), any())).thenReturn(user);
+        
+        List<String> auth = new LinkedList();
+        auth.add("Basic "+new String(Base64.base64Encode("user:user".getBytes())));
+        when(headers.getRequestHeader(HttpHeaders.AUTHORIZATION)).thenReturn(auth);
+        
+        //When
+        Method methodUnderTest = SessionProvider.class.getDeclaredMethod("isAuthorized");
+        methodUnderTest.setAccessible(true);
+        boolean resFalse = (boolean) methodUnderTest.invoke(underTest);
+        
+        //Then
+        verify(loginService, times(1)).validateUser(any(), any());
+        assertFalse(resFalse);
+    }
 }

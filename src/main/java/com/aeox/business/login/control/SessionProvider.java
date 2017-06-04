@@ -98,14 +98,21 @@ public class SessionProvider implements ContainerRequestFilter {
         if(isSessionAuthorized(session, sessionSecured))
             return true;
         
+        
+        //If no session detected the next step is check if the request has Httpbasic security
         User user = getBasicAuthorization(headers);
         if(user == null){
             return false;
         }
         
         user = loginService.validateUser(user.getUsername(), user.getPassword());
+        if(user == null)
+            return false;
         
-        return user != null;
+        if(sessionSecured.role().isEmpty())
+            return true;
+        
+        return user.getRole().getName().compareTo(sessionSecured.role()) == 0;
     } 
     
     @Override
