@@ -1,6 +1,8 @@
 # jee-starter
 
-JEE project with JAX-RS, eclipselink, security annotation (REST & Session), CORS annotation. This project has been designed using CA4.1.
+JEE project with JAX-RS, eclipselink, security annotation (REST & Session), CORS annotation. This project has been designed using CA4.1 for be deployed into the cloud.
+
+This project is ready to create any application with security and a separate frontend (CORS). In addition a plugin for deploying has been added in order to make easy the deployment with dockers.
 
 # Components
 
@@ -12,7 +14,7 @@ This project is composed of the following components:
 
 # Tests
 
-Tests are being currently developed using mockito. Executing the tests is as follows:
+Executing the tests is as follows:
 
 ```
 mvn test
