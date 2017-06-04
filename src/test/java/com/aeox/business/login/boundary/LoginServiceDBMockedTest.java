@@ -88,13 +88,11 @@ public class LoginServiceDBMockedTest {
     @Test
     public void testCreateRole() throws Exception {
         //Given
-        doNothing().when(em).persist(any());
-        doNothing().when(em).flush();
-        doNothing().when(em).refresh(any());
         //When
         Role result = underTest.createRole(ADMIN_ROLE);
         //Then
         assertEquals(ADMIN_ROLE.getName(), result.getName());
+        verify(em, times(1)).persist(any());
     }
 
     /**
@@ -134,14 +132,12 @@ public class LoginServiceDBMockedTest {
     @Test
     public void testCreateUser() throws Exception {
        //Given
-       doNothing().when(em).persist(any());
-       doNothing().when(em).flush();
-       doNothing().when(em).refresh(any());
        //When
        User result = underTest.createUser(ADMIN_ROLE, ADMIN_USER);
        //Then
        assertEquals(ADMIN_USER.getUsername(), result.getUsername());
        assertEquals(ADMIN_ROLE.getName(), result.getRole().getName());
+       verify(em, times(1)).persist(any());
     }
 
     /**

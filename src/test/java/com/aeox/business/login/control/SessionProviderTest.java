@@ -7,6 +7,7 @@ package com.aeox.business.login.control;
 
 
 import com.aeox.business.login.boundary.LoginService;
+import static com.aeox.business.login.control.SessionProvider.getBasicAuthorization;
 import com.aeox.business.login.entity.Role;
 import com.aeox.business.login.entity.User;
 import java.lang.reflect.InvocationTargetException;
@@ -51,7 +52,6 @@ public class SessionProviderTest {
     @Mock
     private ResourceInfo resourceInfo;
     
-    @Spy
     @InjectMocks
     private SessionProvider underTest;
     
@@ -159,37 +159,112 @@ public class SessionProviderTest {
         assertNotNull(userResult);
         assertEquals("user", userResult.getUsername());
     }
+    
+    
+    @SessionSecured(role = "admin")
+    public void supportSessionSecuredMethod(){
+    }
 
     /**
      * Test of filter method, of class SessionProvider.
      */
     @Test
-    public void testFilterSessionSecurizedOk() throws Exception{
-        //Given
-//        ContainerRequestContext containerRequestContext = mock(ContainerRequestContext.class);
-//        when(servletRequest.getSession()).thenReturn(httpSession);
-//        when(resourceInfo.getResourceMethod()).thenReturn(resourceMethod);
-//        when(resourceInfo.getResourceClass()).thenReturn(resourceClass);
-//        when(resourceMethod.getDeclaredAnnotation(any())).thenReturn(sessionSecured);
-//        when(resourceClass.getDeclaredAnnotation(any())).thenReturn(sessionSecured);
-//        when(resourceInfo.getResourceClass());
-//        
-//        User user = new User();
-//        Role role = new Role();
-//        role.setName("testRole");
-//        user.setRole(role);
-//        when(httpSession.getAttribute(anyString())).thenReturn(user);
-//        when(sessionSecured.role()).thenReturn("testRole");
-//        when(loginService.getRoleByUser(user)).thenReturn(role);
-//        
-//        doNothing().when(containerRequestContext).abortWith(any());
+    public void shouldIsAuthorizedBySessionOk() throws Exception{
+        //Given 
+        when(servletRequest.getSession()).thenReturn(httpSession);
+        Method resourceMethod = SessionProviderTest.class.getDeclaredMethod("supportSessionSecuredMethod");
+        when(resourceInfo.getResourceMethod()).thenReturn(resourceMethod);
+        
+        User user = new User();
+        Role role = new Role();
+        role.setName("admin");
+        user.setRole(role);
+        when(httpSession.getAttribute(anyString())).thenReturn(user);
+        when(loginService.getRoleByUser(user)).thenReturn(role);
         
         //When
-//        underTest.filter(containerRequestContext);
-        
+        Method methodUnderTest = SessionProvider.class.getDeclaredMethod("isAuthorized");
+        methodUnderTest.setAccessible(true);
+        boolean resTrue = (boolean) methodUnderTest.invoke(underTest);
         
         //Then
-        
+        assertTrue(resTrue);
+        verify(loginService, times(0)).validateUser(any(), any());
     }
     
+    @Test
+    public void shouldIsAuthorizedBySessionDeniedBecauseSessionNull() throws Exception{
+        //Given 
+        when(servletRequest.getSession()).thenReturn(httpSession);
+        Method resourceMethod = SessionProviderTest.class.getDeclaredMethod("supportSessionSecuredMethod");
+        when(resourceInfo.getResourceMethod()).thenReturn(resourceMethod);
+        
+        User user = new User();
+        Role role = new Role();
+        role.setName("admin");
+        user.setRole(role);
+        when(httpSession.getAttribute(anyString())).thenReturn(null);
+        
+        //When
+        Method methodUnderTest = SessionProvider.class.getDeclaredMethod("isAuthorized");
+        methodUnderTest.setAccessible(true);
+        boolean resFalse = (boolean) methodUnderTest.invoke(underTest);
+        
+        //Then
+        assertFalse(resFalse);
+        verify(loginService, times(0)).validateUser(any(), any());
+    }
+    
+    @Test
+    public void shouldIsAuthorizedBySessionDeniedRoleDoesntMatch() throws Exception{
+        //Given 
+        when(servletRequest.getSession()).thenReturn(httpSession);
+        Method resourceMethod = SessionProviderTest.class.getDeclaredMethod("supportSessionSecuredMethod");
+        when(resourceInfo.getResourceMethod()).thenReturn(resourceMethod);
+        
+        User user = new User();
+        Role role = new Role();
+        role.setName("otherRole");
+        user.setRole(role);
+        when(httpSession.getAttribute(anyString())).thenReturn(user);
+        when(loginService.getRoleByUser(user)).thenReturn(role);
+        
+        //When
+        Method methodUnderTest = SessionProvider.class.getDeclaredMethod("isAuthorized");
+        methodUnderTest.setAccessible(true);
+        boolean resFalse = (boolean) methodUnderTest.invoke(underTest);
+        
+        //Then
+        assertFalse(resFalse);
+        verify(loginService, times(0)).validateUser(any(), any());
+    }
+    
+    @Test
+    public void shouldIsAuthorizedOkWithHTTPBasic() throws Exception{
+        //Given 
+        when(servletRequest.getSession()).thenReturn(httpSession);
+        Method resourceMethod = SessionProviderTest.class.getDeclaredMethod("supportSessionSecuredMethod");
+        when(resourceInfo.getResourceMethod()).thenReturn(resourceMethod);
+        
+        User user = new User();
+        Role role = new Role();
+        role.setName("admin");
+        user.setRole(role);
+        when(httpSession.getAttribute(anyString())).thenReturn(null);
+        when(loginService.getRoleByUser(any())).thenReturn(role);
+        when(loginService.validateUser(any(), any())).thenReturn(user);
+        
+        List<String> auth = new LinkedList();
+        auth.add("Basic "+new String(Base64.base64Encode("user:user".getBytes())));
+        when(headers.getRequestHeader(HttpHeaders.AUTHORIZATION)).thenReturn(auth);
+        
+        //When
+        Method methodUnderTest = SessionProvider.class.getDeclaredMethod("isAuthorized");
+        methodUnderTest.setAccessible(true);
+        boolean resTrue = (boolean) methodUnderTest.invoke(underTest);
+        
+        //Then
+        verify(loginService, times(1)).validateUser(any(), any());
+        assertTrue(resTrue);
+    }
 }

@@ -83,9 +83,8 @@ public class SessionProvider implements ContainerRequestFilter {
         return userRole.getName().compareTo(sessionSecured.role()) == 0;
     }
     
-    @Override
-    public void filter(ContainerRequestContext containerRequestContext) throws IOException {
-        final Response errResponse = Response.status(Response.Status.UNAUTHORIZED).entity(new ErrorMessage(401, "Unauthorized")).build();  
+    
+    private boolean isAuthorized(){
         HttpSession session = servletRequest.getSession();
         
         Method resourceMethod = resourceInfo.getResourceMethod();
@@ -97,18 +96,48 @@ public class SessionProvider implements ContainerRequestFilter {
         }
         
         if(isSessionAuthorized(session, sessionSecured))
-            return;
+            return true;
         
         User user = getBasicAuthorization(headers);
         if(user == null){
-            containerRequestContext.abortWith(errResponse);
-            return;
+            return false;
         }
         
         user = loginService.validateUser(user.getUsername(), user.getPassword());
-        if(user != null)
-            return;
         
-        containerRequestContext.abortWith(errResponse);
+        return user != null;
+    } 
+    
+    @Override
+    public void filter(ContainerRequestContext containerRequestContext) throws IOException {
+         final Response errResponse = Response.status(Response.Status.UNAUTHORIZED).entity(new ErrorMessage(401, "Unauthorized")).build();  
+
+        if(!isAuthorized())
+             containerRequestContext.abortWith(errResponse);
+        
+//        HttpSession session = servletRequest.getSession();
+//        
+//        Method resourceMethod = resourceInfo.getResourceMethod();
+//        SessionSecured sessionSecured = resourceMethod.getDeclaredAnnotation(SessionSecured.class);
+//        
+//        if(sessionSecured == null){
+//            Class<?> resourceClass = resourceInfo.getResourceClass();
+//            sessionSecured = resourceClass.getDeclaredAnnotation(SessionSecured.class);
+//        }
+//        
+//        if(isSessionAuthorized(session, sessionSecured))
+//            return;
+//        
+//        User user = getBasicAuthorization(headers);
+//        if(user == null){
+//            containerRequestContext.abortWith(errResponse);
+//            return;
+//        }
+//        
+//        user = loginService.validateUser(user.getUsername(), user.getPassword());
+//        if(user != null)
+//            return;
+//        
+//        containerRequestContext.abortWith(errResponse);
     }
 }
