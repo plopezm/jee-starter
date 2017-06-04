@@ -41,6 +41,25 @@ mvn package org.pitest:pitest-maven:mutationCoverage
 ```
 Test coverage report will be created here: target/pit-reports/YYYYMMDDHHMI.
 
+To add more packages to be monitored it is necessary to add it into PIT configuration. The following lines show an example.
+
+```
+<groupId>org.pitest</groupId>
+<artifactId>pitest-maven</artifactId>
+<version>1.2.0</version>
+<configuration>
+    <targetClasses>
+        <param>com.aeox.business.common.boundary.*</param>
+        <param>com.aeox.business.common.control.*</param>
+        <param>com.aeox.business.login.boundary.*</param>
+        <param>com.aeox.business.login.control.*</param>
+        <param>com.aeox.business.login.entity.*</param>
+    </targetClasses>
+</configuration>
+```
+
+
+
 ### Remote deployment
 
 This project has defined a profile to deploy de application on desired application server. To do it just type the following.
