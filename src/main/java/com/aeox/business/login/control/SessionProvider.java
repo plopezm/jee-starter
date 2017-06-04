@@ -45,7 +45,7 @@ public class SessionProvider implements ContainerRequestFilter {
     @Context
     private ResourceInfo resourceInfo;
     
-    public static User getBasicAuthorization(HttpHeaders headers) {
+    public static User getHttpBasicAuthorization(HttpHeaders headers) {
         List<String> header = headers.getRequestHeader(HttpHeaders.AUTHORIZATION);
         
         if(header == null || header.isEmpty())
@@ -61,6 +61,22 @@ public class SessionProvider implements ContainerRequestFilter {
         user.setUsername(tokenizer.nextToken());
         user.setPassword(tokenizer.nextToken());
         return user;
+    }
+    
+    private boolean isHttpBasicAuthorized(HttpHeaders headers, SessionSecured sessionSecured){
+        User user = getHttpBasicAuthorization(headers);
+        if(user == null){
+            return false;
+        }
+        
+        user = loginService.validateUser(user.getUsername(), user.getPassword());
+        if(user == null)
+            return false;
+        
+        if(sessionSecured.role().isEmpty())
+            return true;
+        
+        return user.getRole().getName().compareTo(sessionSecured.role()) == 0;
     }
     
     private boolean isSessionAuthorized(HttpSession session, SessionSecured sessionSecured){
@@ -100,51 +116,14 @@ public class SessionProvider implements ContainerRequestFilter {
         
         
         //If no session detected the next step is check if the request has Httpbasic security
-        User user = getBasicAuthorization(headers);
-        if(user == null){
-            return false;
-        }
-        
-        user = loginService.validateUser(user.getUsername(), user.getPassword());
-        if(user == null)
-            return false;
-        
-        if(sessionSecured.role().isEmpty())
-            return true;
-        
-        return user.getRole().getName().compareTo(sessionSecured.role()) == 0;
+        return isHttpBasicAuthorized(headers, sessionSecured);
     } 
     
     @Override
     public void filter(ContainerRequestContext containerRequestContext) throws IOException {
-         final Response errResponse = Response.status(Response.Status.UNAUTHORIZED).entity(new ErrorMessage(401, "Unauthorized")).build();  
+        final Response errResponse = Response.status(Response.Status.UNAUTHORIZED).entity(new ErrorMessage(401, "Unauthorized")).build();  
 
         if(!isAuthorized())
              containerRequestContext.abortWith(errResponse);
-        
-//        HttpSession session = servletRequest.getSession();
-//        
-//        Method resourceMethod = resourceInfo.getResourceMethod();
-//        SessionSecured sessionSecured = resourceMethod.getDeclaredAnnotation(SessionSecured.class);
-//        
-//        if(sessionSecured == null){
-//            Class<?> resourceClass = resourceInfo.getResourceClass();
-//            sessionSecured = resourceClass.getDeclaredAnnotation(SessionSecured.class);
-//        }
-//        
-//        if(isSessionAuthorized(session, sessionSecured))
-//            return;
-//        
-//        User user = getBasicAuthorization(headers);
-//        if(user == null){
-//            containerRequestContext.abortWith(errResponse);
-//            return;
-//        }
-//        
-//        user = loginService.validateUser(user.getUsername(), user.getPassword());
-//        if(user != null)
-//            return;
-//        
-//        containerRequestContext.abortWith(errResponse);
     }
 }

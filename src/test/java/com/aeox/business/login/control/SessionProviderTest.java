@@ -7,7 +7,6 @@ package com.aeox.business.login.control;
 
 
 import com.aeox.business.login.boundary.LoginService;
-import static com.aeox.business.login.control.SessionProvider.getBasicAuthorization;
 import com.aeox.business.login.entity.Role;
 import com.aeox.business.login.entity.User;
 import java.lang.reflect.InvocationTargetException;
@@ -16,7 +15,6 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.HttpHeaders;
 import org.eclipse.persistence.internal.oxm.conversion.Base64;
@@ -28,7 +26,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.*;
 import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
 
 /**
  *
@@ -142,7 +139,7 @@ public class SessionProviderTest {
         List<String> auth = new LinkedList();
         when(headers.getRequestHeader(HttpHeaders.AUTHORIZATION)).thenReturn(auth);
         //When
-        User userResult = SessionProvider.getBasicAuthorization(headers);
+        User userResult = SessionProvider.getHttpBasicAuthorization(headers);
         //Then
         assertNull(userResult);
     }
@@ -154,20 +151,21 @@ public class SessionProviderTest {
         auth.add("Basic "+new String(Base64.base64Encode("user:user".getBytes())));
         when(headers.getRequestHeader(HttpHeaders.AUTHORIZATION)).thenReturn(auth);
         //When
-        User userResult = SessionProvider.getBasicAuthorization(headers);
+        User userResult = SessionProvider.getHttpBasicAuthorization(headers);
         //Then
         assertNotNull(userResult);
         assertEquals("user", userResult.getUsername());
     }
+
+    /** 
+     * Tests for isAuthorized method
+     */
     
     
     @SessionSecured(role = "admin")
     public void supportSessionSecuredMethod(){
     }
-
-    /**
-     * Test of filter method, of class SessionProvider.
-     */
+    
     @Test
     public void shouldIsAuthorizedBySessionOk() throws Exception{
         //Given 

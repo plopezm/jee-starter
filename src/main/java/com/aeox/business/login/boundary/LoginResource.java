@@ -46,7 +46,7 @@ public class LoginResource {
     public Response login(@Context HttpServletRequest request,
             @Context HttpHeaders headers){
         HttpSession session = request.getSession(true);
-        User userReceived = SessionProvider.getBasicAuthorization(headers);
+        User userReceived = SessionProvider.getHttpBasicAuthorization(headers);
         if (userReceived == null)
             return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorMessage(400, "Authorization header is not attached")).build();
         User userFound = loginService.validateUser(userReceived.getUsername(), userReceived.getPassword());
