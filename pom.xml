@@ -52,9 +52,10 @@
     </properties>
     <profiles>
         <profile>
-            <id>payara</id>
+            <id>deploy</id>
             <build>
                 <plugins>
+                    <!-- Plugin for deploying the application remotely -->
                     <plugin>
                         <groupId>org.codehaus.cargo</groupId>
                         <artifactId>cargo-maven2-plugin</artifactId>
@@ -98,6 +99,11 @@
     <build>
         <finalName>jee-starter</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>1.2.0</version>
+            </plugin>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>3.0.0</version>
